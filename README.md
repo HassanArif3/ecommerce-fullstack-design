@@ -2,7 +2,7 @@
 
 A high-fidelity, premium e-commerce sourcing storefront built using React, Vite, Node.js, Express, and MongoDB.
 
-This application connects a polished, high-performance React + Tailwind frontend to a robust Express backend API, offering live product catalog filtering, keyword search, detailed product gallery views, client-side shopping cart calculations, and product CRUD capabilities.
+This application connects a polished, high-performance React + Tailwind frontend to a robust Express backend API, offering JWT authentication, persistent cart functionality, a full admin panel, and direct deployment capabilities.
 
 ---
 
@@ -10,21 +10,7 @@ This application connects a polished, high-performance React + Tailwind frontend
 
 The project is split into two main sections:
 1. **Frontend (`/src`)**: Single Page Application built on React, Vite, and React Router, styled with an Outfit + Inter design system.
-2. **Backend (`/server`)**: REST API built with Express, Mongoose, and CORS middleware, supporting MongoDB queries with a seamless in-memory CRUD fallback when database services are offline.
-
----
-
-## 🛠️ Tech Stack & Requirements
-
-### Frontend
-- **React (v19)** with React Router (v7)
-- **Lucide React** for modern iconography
-- **Vanilla CSS** with a premium global theme system (`src/index.css`)
-
-### Backend
-- **Node.js** & **Express**
-- **MongoDB** & **Mongoose** for data modeling
-- **CORS** & **Dotenv** for configuration
+2. **Backend (`/server`)**: REST API built with Express, Mongoose, and CORS middleware, supporting JWT-based authentication and database-offline fallbacks.
 
 ---
 
@@ -36,6 +22,7 @@ Create a `.env` file inside the `server/` directory:
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/ecommerce-fullstack
 CORS_ORIGIN=http://localhost:5173
+JWT_SECRET=super_secret_session_token_key_here
 ```
 
 ### Frontend Client (`/.env`)
@@ -46,54 +33,62 @@ VITE_API_URL=http://localhost:5000/api
 
 ---
 
+## 🔑 Seeded Accounts (Default testing credentials)
+
+When the database is seeded (or when running in database-offline fallback mode), the following testing accounts are pre-registered:
+
+*   **Standard Customer**:
+    *   **Email**: `customer@brand.com`
+    *   **Password**: `CustomerPass123`
+*   **Admin Manager**:
+    *   **Email**: `admin@brand.com`
+    *   **Password**: `AdminPass123`
+
+---
+
 ## 🚀 Running the Application
 
-### 1. Start MongoDB (Optional)
-If you have MongoDB installed, make sure the service is running locally on port `27017` or specify your MongoDB Atlas cluster URI in `server/.env`.
-
-> [!NOTE]
-> **Db-Offline Fallback**: If MongoDB is not running, the backend server will automatically print a warning and start in **Offline/No-DB Fallback Mode**. In this mode, the server serves all product routes, filters, searches, and CRUD requests from a local in-memory dataset, ensuring zero app crashes!
-
-### 2. Seed the Database
-To load the initial 14 premium catalog products with custom MongoDB ObjectIds:
+### 1. Seed the Database
+To load the initial 14 premium catalog products and default test accounts:
 ```bash
 cd server
 npm run seed
 ```
 
-### 3. Start the Backend API Server
+### 2. Start the Backend API Server
 ```bash
 cd server
 npm start
 ```
 The backend API will run on `http://localhost:5000`. You can verify it via `http://localhost:5000/health-check`.
 
-### 4. Start the Frontend React Client
+### 3. Start the Frontend React Client
 ```bash
 npm run dev
 ```
-The React development server will start on `http://localhost:5173`. Open it in your browser to experience the sourcing catalog!
+The React development server will start on `http://localhost:5173`. Open it in your browser to experience the storefront!
 
 ---
 
-## 🛣️ API Endpoint documentation
+## 🌎 Live Deployments
 
-### Health Check
-- `GET /health-check`: Returns the status of the server and database connection status.
+### Backend → Render
+1. Create a Web Service on Render and point it to your repository.
+2. Render will automatically detect the `render.yaml` configuration in the root directory.
+3. Define the environment variables `MONGO_URI`, `JWT_SECRET`, and `CORS_ORIGIN` (point this to your Vercel frontend domain) in the Render dashboard.
 
-### Products CRUD (`/api/products`)
-- `GET /api/products`: Lists all products. Supports query parameters `category` (e.g., `Electronics`) and `search` (case-insensitive keyword matching on name, brand, or category).
-- `GET /api/products/:id`: Retrieves detailed information for a single product by its ObjectId string.
-- `POST /api/products`: Creates a new product. Requires a JSON body matching the schema.
-- `PUT /api/products/:id`: Updates an existing product's fields by ID.
-- `DELETE /api/products/:id`: Removes a product from the system.
+### Frontend → Vercel
+1. Create a project on Vercel and point it to your repository.
+2. Vercel will automatically detect the Vite environment. Set the build command as `npm run build` and output directory as `dist`.
+3. Add the environment variable `VITE_API_URL` pointing to your deployed Render URL (e.g. `https://your-api.onrender.com/api`).
 
 ---
 
-## 📦 Production Builds
-
-To compile the React frontend for deployment:
-```bash
-npm run build
-```
-This outputs a minified, fully optimized bundle inside the `dist/` directory.
+## 🧑‍💻 How to Create an Admin Account
+To create a custom admin user:
+1. Register a standard account via the frontend registration page `/signup`.
+2. Open your MongoDB GUI tool (e.g. Compass) or Mongo Shell and connect to your database.
+3. Query the `users` collection and update the target user's `role` field from `"customer"` to `"admin"`:
+   ```javascript
+   db.users.updateOne({ email: "user@example.com" }, { $set: { role: "admin" } });
+   ```
