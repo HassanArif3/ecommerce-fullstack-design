@@ -1,0 +1,255 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Color Palette */
+  --primary: #1273eb;
+  --primary-hover: #0c5bc0;
+  --primary-light: #e3f0ff;
+  --bg-main: #f7f8fa;
+  --bg-card: #ffffff;
+  --text-main: #1c1c1c;
+  --text-muted: #505050;
+  --text-light: #8b96a5;
+  
+  --orange: #ff9017;
+  --orange-light: #ffe5cc;
+  --green: #00b517;
+  --green-light: #e5f9e7;
+  --red: #fa3434;
+  --red-light: #ffebeb;
+  --teal: #00cbd4;
+  --teal-light: #e0fbfd;
+  
+  --border: #e3e8ee;
+  --border-focus: #1273eb;
+  
+  /* Fonts */
+  --font-body: 'Inter', sans-serif;
+  --font-title: 'Outfit', sans-serif;
+  
+  /* Layout */
+  --max-width: 1200px;
+  --header-height: 72px;
+  --nav-height: 48px;
+  
+  /* Transitions */
+  --transition: all 0.2s ease-in-out;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 10px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+/* Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Utility Layouts */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: var(--transition);
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: white;
+  border: 1px solid var(--border);
+  color: var(--primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-main);
+  border-color: var(--primary);
+}
+
+.btn-outline {
+  background-color: white;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.btn-outline:hover {
+  border-color: var(--text-light);
+  color: var(--text-main);
+}
+
+.btn-text {
+  color: var(--primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.btn-text:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-red {
+  color: var(--red);
+  border: 1px solid var(--border);
+  background-color: white;
+}
+
+.btn-red:hover {
+  background-color: var(--red-light);
+  border-color: var(--red);
+}
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge-red {
+  background-color: var(--red-light);
+  color: var(--red);
+}
+
+.badge-orange {
+  background-color: var(--orange-light);
+  color: var(--orange);
+}
+
+/* Forms */
+.form-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: white;
+  transition: var(--transition);
+}
+
+.form-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(18, 115, 235, 0.15);
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Layout Grid */
+.grid-container {
+  display: grid;
+  gap: 20px;
+}
+
+/* Cards */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccd1d9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aab2bd;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
