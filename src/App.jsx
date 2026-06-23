@@ -28,25 +28,40 @@ import {
   Minus,
   Sparkles,
   ShoppingBag,
-  ExternalLink
+  ExternalLink,
+  Shield,
+  LogOut
 } from 'lucide-react';
 import { getAllProducts, getProductById } from './api/products';
+import { getCart, saveCart } from './api/cart';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import AdminPanel from './pages/AdminPanel';
 
-// Main App wrapper with Router
+// Main App wrapper with AuthProvider and Router
 export default function App() {
   return (
-    <Router>
-      <MainAppContent />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <MainAppContent />
+      </Router>
+    </AuthProvider>
   );
 }
 
 function MainAppContent() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isAuthenticated, token, user, logout } = useAuth();
   
-  // Cart & Save for Later States (Client-Side)
-  const [cart, setCart] = useState([]);
+  // Cart & Save for Later States (Client-Side persistent)
+  const [cart, setCart] = useState(() => {
+    const stored = localStorage.getItem('cart');
+    return stored ? JSON.parse(stored) : [];
+  });
   const [savedForLater, setSavedForLater] = useState([]);
   
   // Global search input states
@@ -60,6 +75,69 @@ function MainAppContent() {
     setSearchQuery(q);
     setSelectedCategory(cat);
   }, [searchParams]);
+
+  // Sync cart to local storage and backend (if logged in)
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+    if (isAuthenticated && token) {
+      const formattedItems = cart.map(item => ({
+        productId: item.product._id,
+        quantity: item.quantity
+      }));
+      saveCart(formattedItems, token).catch(err => console.error("Failed to sync cart to server:", err));
+    }
+  }, [cart, isAuthenticated, token]);
+
+  // Merge local storage cart with backend cart upon login
+  useEffect(() => {
+    if (isAuthenticated && token) {
+      const mergeCarts = async () => {
+        try {
+          const serverCartData = await getCart(token);
+          const serverItems = serverCartData.items || [];
+          
+          const mergedCartMap = {};
+
+          // Load server items first
+          serverItems.forEach(item => {
+            const prod = item.productId;
+            if (prod && prod._id) {
+              mergedCartMap[prod._id] = { product: prod, quantity: item.quantity };
+            }
+          });
+
+          // Merge local items: combine quantities for matching products
+          cart.forEach(item => {
+            const id = item.product._id;
+            if (mergedCartMap[id]) {
+              mergedCartMap[id].quantity += item.quantity;
+            } else {
+              mergedCartMap[id] = { product: item.product, quantity: item.quantity };
+            }
+          });
+
+          const mergedCart = Object.values(mergedCartMap);
+          setCart(mergedCart);
+          
+          const formattedItems = mergedCart.map(item => ({
+            productId: item.product._id,
+            quantity: item.quantity
+          }));
+          await saveCart(formattedItems, token);
+        } catch (error) {
+          console.error("Error merging carts:", error);
+        }
+      };
+      mergeCarts();
+    }
+  }, [isAuthenticated, token]);
+
+  const handleLogout = () => {
+    logout();
+    setCart([]);
+    localStorage.removeItem('cart');
+    navigate('/');
+  };
 
   // Cart Helper functions
   const addToCart = (product, qty = 1) => {
@@ -136,6 +214,7 @@ function MainAppContent() {
             <div style={{ display: 'flex', gap: '20px' }}>
               <Link to="/">Home</Link>
               <Link to="/products">Catalog</Link>
+              {user?.role === 'admin' && <Link to="/admin" style={{ color: 'var(--primary)', fontWeight: '600' }}>Admin Dashboard</Link>}
               <span>Hot offers</span>
               <span>Help Center</span>
             </div>
@@ -186,18 +265,30 @@ function MainAppContent() {
 
           {/* Action Icons */}
           <div style={{ display: 'flex', gap: '20px', color: 'var(--text-muted)' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', gap: '4px' }} onClick={() => alert('Profile panel coming soon!')}>
-              <User size={20} />
-              <span style={{ fontSize: '0.75rem' }}>Profile</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', gap: '4px' }} onClick={() => alert('No new messages.')}>
-              <MessageSquare size={20} />
-              <span style={{ fontSize: '0.75rem' }}>Message</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', gap: '4px' }} onClick={() => navigate('/products')}>
-              <Heart size={20} />
-              <span style={{ fontSize: '0.75rem' }}>Orders</span>
-            </div>
+            {isAuthenticated ? (
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <User size={20} />
+                  <span style={{ fontSize: '0.75rem', fontWeight: '600' }}>{user?.name.split(' ')[0]}</span>
+                </div>
+                <div onClick={handleLogout} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', gap: '4px', color: 'var(--red)' }}>
+                  <LogOut size={20} />
+                  <span style={{ fontSize: '0.75rem' }}>Logout</span>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <Link to="/login" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                  <User size={20} />
+                  <span style={{ fontSize: '0.75rem' }}>Sign In</span>
+                </Link>
+                <Link to="/signup" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', color: 'var(--primary)' }}>
+                  <Plus size={20} />
+                  <span style={{ fontSize: '0.75rem' }}>Sign Up</span>
+                </Link>
+              </div>
+            )}
+            
             <Link 
               to="/cart"
               style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', gap: '4px', position: 'relative' }} 
@@ -240,6 +331,9 @@ function MainAppContent() {
           <Route path="/" element={<HomePage addToCart={addToCart} />} />
           <Route path="/products" element={<CatalogPage addToCart={addToCart} handleSaveForLater={handleSaveForLater} />} />
           <Route path="/product/:id" element={<ProductDetailPage addToCart={addToCart} handleSaveForLater={handleSaveForLater} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
           <Route path="/cart" element={
             <CartPage 
               cart={cart} 
@@ -383,12 +477,10 @@ function HomePage({ addToCart }) {
     loadHomeData();
   }, []);
 
-  // Decisions: Featured subset is the first 6 items from the database.
   const featuredProducts = productsList.slice(0, 6);
   const electronics = productsList.filter(p => p.category === 'Electronics');
   const homeInteriors = productsList.filter(p => p.category === 'Home interiors');
 
-  // Dynamic GoPro link finder
   const goproId = productsList.find(p => p.brand === 'GoPro')?._id || '';
 
   if (loading) {
@@ -451,8 +543,8 @@ function HomePage({ addToCart }) {
             <div style={{ width: '44px', height: '44px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
               <User size={24} />
             </div>
-            <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Hi, user let's get started</span>
-            <button className="btn btn-primary" style={{ width: '100%', padding: '6px 12px', fontSize: '0.85rem' }} onClick={() => alert('Offline Mode.')}>Join now</button>
+            <span style={{ fontSize: '0.85rem', fontWeight: '500' }}>Sourcing Center Global</span>
+            <button className="btn btn-primary" style={{ width: '100%', padding: '6px 12px', fontSize: '0.85rem' }} onClick={() => navigate('/products')}>Sourcing Catalog</button>
           </div>
           <div style={{ backgroundColor: 'var(--orange-light)', padding: '14px', borderRadius: '6px', color: '#663c00' }}>
             <span style={{ fontSize: '0.9rem', fontWeight: '700', display: 'block' }}>Get US $10 off</span>
@@ -614,7 +706,6 @@ function HomePage({ addToCart }) {
 function CatalogPage({ addToCart, handleSaveForLater }) {
   const [searchParams] = useSearchParams();
   const [productsList, setProductsList] = useState([]);
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -623,7 +714,6 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
   const [activeFeatures, setActiveFeatures] = useState([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [ratingFilter, setRatingFilter] = useState(null);
   const [isListView, setIsListView] = useState(false);
 
   const category = searchParams.get('category') || '';
@@ -651,7 +741,6 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
     fetchApiData();
   }, [category, search]);
 
-  // Client-Side filtering for brands, features, price min/max, ratings
   const filteredProducts = productsList.filter(product => {
     if (activeBrands.length > 0 && !activeBrands.includes(product.brand)) return false;
     if (activeFeatures.length > 0) {
@@ -660,7 +749,6 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
     }
     if (minPrice !== '' && product.price < parseFloat(minPrice)) return false;
     if (maxPrice !== '' && product.price > parseFloat(maxPrice)) return false;
-    if (ratingFilter !== null && product.rating < ratingFilter) return false;
     return true;
   });
 
@@ -669,7 +757,6 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
     setActiveFeatures([]);
     setMinPrice('');
     setMaxPrice('');
-    setRatingFilter(null);
   };
 
   if (loading) {
@@ -680,8 +767,31 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
     );
   }
 
+  const catalogResponsiveStyles = `
+    @media (max-width: 768px) {
+      .catalog-layout {
+        flex-direction: column !important;
+      }
+      .filters-sidebar {
+        width: 100% !important;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 20px;
+      }
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .products-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  `;
+
   return (
     <div className="container">
+      <style>{catalogResponsiveStyles}</style>
+
       {/* Breadcrumbs */}
       <div style={{ fontSize: '0.85rem', color: 'var(--text-light)', marginBottom: '16px', display: 'flex', gap: '6px' }}>
         <Link to="/">Home</Link>
@@ -689,9 +799,9 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
         <span style={{ fontWeight: '500' }}>All products</span>
       </div>
 
-      <div style={{ display: 'flex', gap: '24px' }}>
+      <div className="catalog-layout" style={{ display: 'flex', gap: '24px' }}>
         {/* Left Sidebar Filters */}
-        <div style={{ width: '240px', display: 'flex', flexDirection: 'column', gap: '20px', flexShrink: 0 }}>
+        <div className="filters-sidebar" style={{ width: '240px', display: 'flex', flexDirection: 'column', gap: '20px', flexShrink: 0 }}>
           {/* Categories links */}
           <div style={{ borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
             <h4 style={{ fontSize: '0.95rem', fontWeight: '700', marginBottom: '12px' }}>Category</h4>
@@ -787,7 +897,7 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
                   <button className="btn btn-primary" onClick={clearAllFilters}>Reset Filters</button>
                 </div>
               ) : !isListView ? (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+                <div className="products-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
                   {filteredProducts.map((product) => (
                     <div key={product._id} className="card" style={{ padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                       <Link to={`/product/${product._id}`}>
@@ -815,11 +925,11 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {filteredProducts.map((product) => (
-                    <div key={product._id} className="card" style={{ padding: '16px', display: 'flex', gap: '20px' }}>
+                    <div key={product._id} className="card" style={{ padding: '16px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                       <div style={{ width: '180px', height: '140px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <img src={product.image} alt={product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
                       </div>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minWidth: '240px' }}>
                         <div>
                           <Link to={`/product/${product._id}`}>
                             <h4 style={{ fontSize: '1.1rem', fontWeight: '600', color: 'var(--text-main)', marginBottom: '6px' }}>{product.name}</h4>
@@ -829,7 +939,7 @@ function CatalogPage({ addToCart, handleSaveForLater }) {
                           </span>
                           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{product.description}</p>
                         </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px' }}>
                           <span style={{ fontSize: '1.25rem', fontWeight: '700' }}>${product.price.toFixed(2)}</span>
                           <button 
                             id={`btn-cart-${product._id}`}
@@ -900,17 +1010,30 @@ function ProductDetailPage({ addToCart, handleSaveForLater }) {
     );
   }
 
+  const detailResponsiveStyles = `
+    @media (max-width: 768px) {
+      .detail-layout {
+        flex-direction: column !important;
+      }
+      .gallery-block {
+        width: 100% !important;
+      }
+    }
+  `;
+
   return (
     <div className="container">
+      <style>{detailResponsiveStyles}</style>
+
       {/* Back button */}
       <button className="btn btn-text" style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', padding: '0' }} onClick={() => navigate('/products')}>
         <ArrowLeft size={16} /> Back to Catalog
       </button>
 
       {/* Main product card */}
-      <div style={{ display: 'flex', gap: '24px', backgroundColor: 'white', border: '1px solid var(--border)', borderRadius: '6px', padding: '24px', marginBottom: '24px' }}>
+      <div className="detail-layout" style={{ display: 'flex', gap: '24px', backgroundColor: 'white', border: '1px solid var(--border)', borderRadius: '6px', padding: '24px', marginBottom: '24px' }}>
         {/* Left Gallery */}
-        <div style={{ width: '380px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="gallery-block" style={{ width: '380px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ height: '340px', border: '1px solid var(--border)', borderRadius: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
             <img src={product.image} alt={product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
           </div>
@@ -986,11 +1109,11 @@ function ProductDetailPage({ addToCart, handleSaveForLater }) {
             )}
           </div>
 
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
             <button 
               id={`btn-cart-${product._id}`}
               className="btn btn-primary" 
-              style={{ padding: '12px 24px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              style={{ padding: '12px 24px', flex: 1, minWidth: '150px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               onClick={() => addToCart(product)}
               disabled={product.stock <= 0}
             >
@@ -998,7 +1121,7 @@ function ProductDetailPage({ addToCart, handleSaveForLater }) {
             </button>
             <button 
               className="btn btn-secondary" 
-              style={{ padding: '12px 24px', flex: 1 }}
+              style={{ padding: '12px 24px', flex: 1, minWidth: '150px' }}
               onClick={() => {
                 handleSaveForLater(product);
                 alert(`${product.name} saved for later!`);
@@ -1076,7 +1199,6 @@ function CartPage({
   const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
-  
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
   const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -1100,8 +1222,23 @@ function CartPage({
     setCheckoutSuccess(true);
   };
 
+  const cartResponsiveStyles = `
+    @media (max-width: 768px) {
+      .cart-layout {
+        flex-direction: column !important;
+      }
+      .cart-summary-panel {
+        width: 100% !important;
+      }
+      .cart-item-block {
+        flex-direction: column !important;
+      }
+    }
+  `;
+
   return (
     <div className="container">
+      <style>{cartResponsiveStyles}</style>
       <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '20px' }}>
         My cart <span style={{ fontSize: '1rem', fontWeight: '500', color: 'var(--text-light)' }}>({cart.length} items)</span>
       </h2>
@@ -1121,17 +1258,17 @@ function CartPage({
           <button className="btn btn-primary" onClick={() => navigate('/products')}>Sourcing Catalog</button>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+        <div className="cart-layout" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
           {/* Left List */}
           <div style={{ flex: 1, backgroundColor: 'white', border: '1px solid var(--border)', borderRadius: '6px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {cart.map((item) => (
-              <div key={item.product._id} style={{ display: 'flex', gap: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '20px' }}>
+              <div key={item.product._id} className="cart-item-block" style={{ display: 'flex', gap: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '20px' }}>
                 <div style={{ width: '80px', height: '80px', border: '1px solid var(--border)', borderRadius: '6px', padding: '6px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <img src={item.product.image} alt={item.product.name} style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
                 </div>
                 
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyItems: 'space-between', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
                     <div>
                       <h4 style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--text-main)' }}>{item.product.name}</h4>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>Category: {item.product.category}</span>
@@ -1139,7 +1276,7 @@ function CartPage({
                     <span style={{ fontSize: '1.1rem', fontWeight: '700' }}>${(item.product.price * item.quantity).toFixed(2)}</span>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', flexWrap: 'wrap', gap: '10px' }}>
                     <div style={{ display: 'flex', gap: '12px' }}>
                       <button className="btn btn-red" style={{ padding: '6px 12px', fontSize: '0.8rem', gap: '4px' }} onClick={() => removeFromCart(item.product._id)}>
                         <Trash2 size={14} /> Remove
@@ -1165,7 +1302,7 @@ function CartPage({
           </div>
 
           {/* Right Panel Summary */}
-          <div style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="cart-summary-panel" style={{ width: '320px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ backgroundColor: 'white', border: '1px solid var(--border)', borderRadius: '6px', padding: '16px' }}>
               <span style={{ fontSize: '0.85rem', color: 'var(--text-light)', display: 'block', marginBottom: '8px' }}>Have a coupon?</span>
               <form onSubmit={handleApplyCoupon} style={{ display: 'flex', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>

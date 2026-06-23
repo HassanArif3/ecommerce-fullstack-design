@@ -24,10 +24,12 @@ export const getProductById = async (id) => {
 };
 
 export const addProduct = async (data) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/products`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     },
     body: JSON.stringify(data)
   });
@@ -39,10 +41,12 @@ export const addProduct = async (data) => {
 };
 
 export const updateProduct = async (id, data) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/products/${id}`, {
     method: 'PUT',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     },
     body: JSON.stringify(data)
   });
@@ -54,11 +58,16 @@ export const updateProduct = async (id, data) => {
 };
 
 export const deleteProduct = async (id) => {
+  const token = localStorage.getItem('token');
   const response = await fetch(`${API_URL}/products/${id}`, {
-    method: 'DELETE'
+    method: 'DELETE',
+    headers: {
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    }
   });
   if (!response.ok) {
-    throw new Error('Failed to delete product');
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to delete product');
   }
   return response.json();
 };
