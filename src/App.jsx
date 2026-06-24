@@ -45,7 +45,7 @@ import AdminPanel from './pages/AdminPanel';
 export default function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router basename={import.meta.env.BASE_URL}>
         <MainAppContent />
       </Router>
     </AuthProvider>
