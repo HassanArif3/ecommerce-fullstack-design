@@ -77,10 +77,23 @@ The React development server will start on `http://localhost:5173`. Open it in y
 2. Render will automatically detect the `render.yaml` configuration in the root directory.
 3. Define the environment variables `MONGO_URI`, `JWT_SECRET`, and `CORS_ORIGIN` (point this to your Vercel frontend domain) in the Render dashboard.
 
-### Frontend → Vercel
-1. Create a project on Vercel and point it to your repository.
-2. Vercel will automatically detect the Vite environment. Set the build command as `npm run build` and output directory as `dist`.
-3. Add the environment variable `VITE_API_URL` pointing to your deployed Render URL (e.g. `https://your-api.onrender.com/api`).
+### Frontend → GitHub Pages (Team Lead Instruction)
+This project is pre-configured to deploy directly to GitHub Pages using the `gh-pages` package.
+
+1. **Set Backend URL**: Open the root `.env` file and set the `VITE_API_URL` to your live deployed Render API URL:
+   ```env
+   VITE_API_URL=https://ecommerce-backend-api.onrender.com/api
+   ```
+2. **Deploy to GitHub Pages**: Run the deployment script from the root directory of the project:
+   ```bash
+   npm run deploy
+   ```
+   This command automatically builds the production client and pushes the compiled assets to the `gh-pages` branch on GitHub.
+3. **Enable GitHub Pages on GitHub**:
+   - Go to your repository page on GitHub.
+   - Navigate to **Settings** -> **Pages**.
+   - Under **Build and deployment** -> **Branch**, select `gh-pages` and `/ (root)`, then click **Save**.
+   - Your live storefront will be accessible at: `https://HassanArif3.github.io/ecommerce-fullstack-design/`.
 
 ---
 
