@@ -643,6 +643,75 @@ function HomePage({ addToCart }) {
         </div>
       </div>
 
+      {/* 3.5. Section: Consumer Electronics */}
+      <div style={{ display: 'flex', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', height: '280px' }}>
+        <div style={{ 
+          width: '280px', 
+          backgroundImage: 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url(https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          color: 'white'
+        }}>
+          <div style={{ color: '#1c1c1c' }}>
+            <h4 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '6px' }}>Consumer<br/>electronics</h4>
+            <Link to="/products?category=Electronics" className="btn" style={{ padding: '8px 16px', fontSize: '0.85rem', backgroundColor: 'white', color: '#1c1c1c', fontWeight: '600' }}>
+              Source now
+            </Link>
+          </div>
+        </div>
+        
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
+          {electronics.slice(0, 4).map((product) => (
+            <Link 
+              key={product._id}
+              to={`/product/${product._id}`}
+              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, marginRight: '10px' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
+              </div>
+              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img src={product.image} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* 3.7. Inquiry Banner */}
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        backgroundImage: 'linear-gradient(135deg, #3182ce 0%, #1a365d 100%)', 
+        color: 'white', 
+        borderRadius: '6px', 
+        padding: '30px 40px',
+        margin: '20px 0',
+        flexWrap: 'wrap',
+        gap: '20px'
+      }}>
+        <div style={{ flex: 1, minWidth: '280px' }}>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '10px' }}>An easy way to send requests to all suppliers</h3>
+          <p style={{ fontSize: '0.9rem', color: '#ebf8ff' }}>Specify your requirements and get custom quotes directly from verified global manufacturers.</p>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <input 
+            type="text" 
+            placeholder="What item do you need?" 
+            style={{ padding: '12px 16px', borderRadius: '4px', border: 'none', minWidth: '240px', color: '#1c1c1c' }}
+          />
+          <button className="btn" style={{ padding: '12px 24px', backgroundColor: '#007aff', color: 'white', fontWeight: '700', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+            Send inquiry
+          </button>
+        </div>
+      </div>
+
       {/* 4. Section: Featured/Recommended Items */}
       <div>
         <h3 style={{ fontSize: '1.4rem', fontWeight: '700', marginBottom: '20px' }}>Featured Sourcing Products</h3>
