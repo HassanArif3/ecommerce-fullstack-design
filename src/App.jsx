@@ -604,24 +604,24 @@ function HomePage({ addToCart }) {
       </div>
 
       {/* 3. Section: Home and Outdoor */}
-      <div style={{ display: 'flex', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', height: '280px' }}>
+      <div style={{ display: 'flex', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', height: '150px' }}>
         <div style={{ 
-          width: '280px', 
+          width: '240px', 
           backgroundImage: 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url(https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=500&auto=format&fit=crop&q=80)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          padding: '24px',
+          padding: '20px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          color: 'white'
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          color: 'white',
+          flexShrink: 0
         }}>
-          <div style={{ color: '#1c1c1c' }}>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '6px' }}>Home and<br/>outdoor</h4>
-            <Link to="/products?category=Home interiors" className="btn" style={{ padding: '8px 16px', fontSize: '0.85rem', backgroundColor: 'white', color: '#1c1c1c', fontWeight: '600' }}>
-              Source now
-            </Link>
-          </div>
+          <h4 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '12px', color: '#1c1c1c', lineHeight: '1.2' }}>Home and<br/>outdoor</h4>
+          <Link to="/products?category=Home interiors" className="btn" style={{ padding: '6px 12px', fontSize: '0.75rem', backgroundColor: 'white', color: '#1c1c1c', fontWeight: '600', borderRadius: '4px' }}>
+            Source now
+          </Link>
         </div>
         
         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)' }}>
@@ -629,13 +629,13 @@ function HomePage({ addToCart }) {
             <Link 
               key={product._id}
               to={`/product/${product._id}`}
-              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}
+              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', backgroundColor: '#ffffff' }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, marginRight: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', flex: 1, marginRight: '10px' }}>
                 <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
               </div>
-              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <img src={product.image} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: '4px' }} />
               </div>
             </Link>
@@ -644,21 +644,23 @@ function HomePage({ addToCart }) {
       </div>
 
       {/* 3.5. Section: Consumer Electronics */}
-      <div style={{ display: 'flex', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', height: '280px' }}>
+      <div style={{ display: 'flex', backgroundColor: '#ffffff', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden', height: '150px' }}>
         <div style={{ 
-          width: '280px', 
+          width: '240px', 
           backgroundImage: 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.25)), url(https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          padding: '24px',
+          padding: '20px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          color: 'white'
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          color: 'white',
+          flexShrink: 0
         }}>
           <div style={{ color: '#1c1c1c' }}>
-            <h4 style={{ fontSize: '1.25rem', fontWeight: '700', marginBottom: '6px' }}>Consumer<br/>electronics</h4>
-            <Link to="/products?category=Electronics" className="btn" style={{ padding: '8px 16px', fontSize: '0.85rem', backgroundColor: 'white', color: '#1c1c1c', fontWeight: '600' }}>
+            <h4 style={{ fontSize: '1.1rem', fontWeight: '700', marginBottom: '12px', color: '#1c1c1c', lineHeight: '1.2' }}>Consumer<br/>electronics</h4>
+            <Link to="/products?category=Electronics" className="btn" style={{ padding: '6px 12px', fontSize: '0.75rem', backgroundColor: 'white', color: '#1c1c1c', fontWeight: '600', borderRadius: '4px' }}>
               Source now
             </Link>
           </div>
@@ -669,13 +671,13 @@ function HomePage({ addToCart }) {
             <Link 
               key={product._id}
               to={`/product/${product._id}`}
-              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between' }}
+              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', backgroundColor: '#ffffff' }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', flex: 1, marginRight: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', flex: 1, marginRight: '10px' }}>
                 <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
               </div>
-              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <img src={product.image} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: '4px' }} />
               </div>
             </Link>
