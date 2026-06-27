@@ -629,13 +629,13 @@ function HomePage({ addToCart }) {
             <Link 
               key={product._id}
               to={`/product/${product._id}`}
-              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', backgroundColor: '#ffffff' }}
+              style={{ padding: '12px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', backgroundColor: '#ffffff' }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', flex: 1, marginRight: '10px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', flex: 1, marginRight: '8px' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
               </div>
-              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '68px', height: '68px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <img src={product.image} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: '4px' }} />
               </div>
             </Link>
@@ -671,13 +671,13 @@ function HomePage({ addToCart }) {
             <Link 
               key={product._id}
               to={`/product/${product._id}`}
-              style={{ padding: '16px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', backgroundColor: '#ffffff' }}
+              style={{ padding: '12px', borderRight: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', backgroundColor: '#ffffff' }}
             >
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', flex: 1, marginRight: '10px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%', flex: 1, marginRight: '8px' }}>
+                <span style={{ fontSize: '0.82rem', fontWeight: '600', color: 'var(--text-main)', lineHeight: '1.3', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.name}</span>
+                <span style={{ fontSize: '0.78rem', color: 'var(--text-light)' }}>From <strong style={{ color: 'var(--text-muted)' }}>USD {product.price}</strong></span>
               </div>
-              <div style={{ width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: '68px', height: '68px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <img src={product.image} alt={product.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover', borderRadius: '4px' }} />
               </div>
             </Link>
