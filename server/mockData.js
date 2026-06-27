@@ -292,6 +292,27 @@ const mockProducts = [
       "Size": "100mm x 70mm x 8mm",
       "Memory": "N/A"
     }
+  },
+  {
+    _id: "60c72b2f9b1d8e1f8c8b4515",
+    name: "Nordic Minimalist Solid Oak Wood Coffee Table",
+    price: 149.00,
+    image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=500&auto=format&fit=crop&q=80",
+    description: "A clean, minimal coffee table crafted from solid oak wood. Features a lower shelf for storage and a spacious top surface, perfect for modern living rooms.",
+    category: "Home interiors",
+    stock: 15,
+    brand: "Pocco",
+    rating: 8.8,
+    reviews: 34,
+    sold: 110,
+    features: ["Solid Oak", "Minimalist Design"],
+    details: {
+      "Model": "CT-OAK77",
+      "Style": "Minimalist Coffee Table",
+      "Certificate": "FSC-Certified",
+      "Size": "100cm x 60cm x 42cm",
+      "Memory": "N/A"
+    }
   }
 ];
 
