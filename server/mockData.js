@@ -276,7 +276,7 @@ const mockProducts = [
     _id: "60c72b2f9b1d8e1f8c8b4514",
     name: "Minimalist Blue Leather Pocket Wallet",
     price: 10.30,
-    image: "https://images.unsplash.com/photo-1627124765135-5e120220942c?w=500&auto=format&fit=crop&q=80",
+    image: "https://images.unsplash.com/photo-1598387993441-a364f854c3e1?w=500&auto=format&fit=crop&q=80",
     description: "A sleek, minimal card holder wallet crafted in high-quality navy blue leather, perfect for carrying essential cards and folded cash.",
     category: "Accessories",
     stock: 90,
