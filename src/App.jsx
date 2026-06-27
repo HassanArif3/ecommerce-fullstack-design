@@ -40,6 +40,7 @@ import AdminRoute from './components/AdminRoute';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import AdminPanel from './pages/AdminPanel';
+import Profile from './pages/Profile';
 
 // Main App wrapper with AuthProvider and Router
 export default function App() {
@@ -267,10 +268,10 @@ function MainAppContent() {
           <div style={{ display: 'flex', gap: '20px', color: 'var(--text-muted)' }}>
             {isAuthenticated ? (
               <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                <Link to="/profile" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
                   <User size={20} />
                   <span style={{ fontSize: '0.75rem', fontWeight: '600' }}>{user?.name.split(' ')[0]}</span>
-                </div>
+                </Link>
                 <div onClick={handleLogout} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', gap: '4px', color: 'var(--red)' }}>
                   <LogOut size={20} />
                   <span style={{ fontSize: '0.75rem' }}>Logout</span>
@@ -334,6 +335,7 @@ function MainAppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile cart={cart} /></ProtectedRoute>} />
           <Route path="/cart" element={
             <CartPage 
               cart={cart} 
