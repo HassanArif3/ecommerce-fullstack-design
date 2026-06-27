@@ -442,6 +442,7 @@ function MainAppContent() {
 
 // ================= PAGE: HOME =================
 function HomePage({ addToCart }) {
+  const [inquiryText, setInquiryText] = useState('');
   const [productsList, setProductsList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -706,9 +707,22 @@ function HomePage({ addToCart }) {
           <input 
             type="text" 
             placeholder="What item do you need?" 
+            value={inquiryText}
+            onChange={(e) => setInquiryText(e.target.value)}
             style={{ padding: '12px 16px', borderRadius: '4px', border: 'none', minWidth: '240px', color: '#1c1c1c' }}
           />
-          <button className="btn" style={{ padding: '12px 24px', backgroundColor: '#007aff', color: 'white', fontWeight: '700', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          <button 
+            className="btn" 
+            style={{ padding: '12px 24px', backgroundColor: '#007aff', color: 'white', fontWeight: '700', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            onClick={() => {
+              if (!inquiryText.trim()) {
+                alert("Please enter what item you need first.");
+                return;
+              }
+              alert(`Inquiry sent! Suppliers have been notified for: "${inquiryText}".`);
+              setInquiryText('');
+            }}
+          >
             Send inquiry
           </button>
         </div>
