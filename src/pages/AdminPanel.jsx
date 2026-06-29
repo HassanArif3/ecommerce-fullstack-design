@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAllProducts, addProduct, updateProduct, deleteProduct } from '../api/products';
 import { Plus, Edit2, Trash2, X, RefreshCw, AlertTriangle, ShieldCheck, DollarSign, Layers, Package } from 'lucide-react';
+import StockChart from '../components/admin/StockChart';
 
 export default function AdminPanel() {
   const [products, setProducts] = useState([]);
@@ -200,6 +201,8 @@ export default function AdminPanel() {
         </div>
       ) : (
         <>
+          <StockChart products={products} />
+          
           {/* DESKTOP TABLE VIEW */}
           <div className="admin-table-container" style={{ backgroundColor: 'white', border: '1px solid var(--border)', borderRadius: '6px', overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.95rem' }}>
